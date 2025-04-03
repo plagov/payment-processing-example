@@ -1,10 +1,9 @@
 package io.plagov.payment_processing.models;
 
-import java.util.Currency;
+import org.joda.money.Money;
 
 public record PaymentRequest(
-        double amount,
-        String currency,
+        Money amount,
         String debtorIban,
         String creditorIban,
         String details

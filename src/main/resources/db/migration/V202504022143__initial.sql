@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS payments
 (
     id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     type                VARCHAR(255) NOT NULL,
-    amount              DECIMAL(19, 4) NOT NULL,
+    amount              NUMERIC(19, 4) NOT NULL,
     currency            VARCHAR(3) NOT NULL,
     debtor_iban         VARCHAR(34) NOT NULL,
     creditor_iban       VARCHAR(34) NOT NULL,

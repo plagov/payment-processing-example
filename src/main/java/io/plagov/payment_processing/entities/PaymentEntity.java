@@ -5,6 +5,7 @@ import io.plagov.payment_processing.models.enums.PaymentType;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -13,7 +14,7 @@ import java.util.UUID;
 public class PaymentEntity {
     private UUID id;
     private PaymentType type;
-    private double amount;
+    private BigDecimal amount;
     private String currency;
     private String debtorIban;
     private String creditorIban;
@@ -21,5 +22,5 @@ public class PaymentEntity {
     private PaymentStatus status;
     private Instant createdAt;
     private Instant cancelledAt;
-    private Double cancellationFee;
+    private BigDecimal cancellationFee;
 }

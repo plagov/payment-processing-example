@@ -31,9 +31,10 @@ class CreatePaymentTest {
 
     @Test
     void shouldCreateNewPayment() throws Exception {
-        var paymentRequest = new PaymentRequest(Money.parse("EUR 150.25"),
-                "EE123",
-                "LT456",
+        var paymentRequest = new PaymentRequest(
+                Money.parse("EUR 150.25"),
+                "EE382200221020145685",
+                "LT121000011101001000",
                 "test details");
 
         mockMvc.perform(post("/api/v1/payments")
@@ -43,8 +44,8 @@ class CreatePaymentTest {
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.type").value("PESA"))
                 .andExpect(jsonPath("$.amount").value("EUR 150.25"))
-                .andExpect(jsonPath("$.debtorIban").value("EE123"))
-                .andExpect(jsonPath("$.creditorIban").value("LT456"))
+                .andExpect(jsonPath("$.debtorIban").value("EE382200221020145685"))
+                .andExpect(jsonPath("$.creditorIban").value("LT121000011101001000"))
                 .andExpect(jsonPath("$.details").value("test details"))
                 .andExpect(jsonPath("$.status").value("ACCEPTED"))
                 .andExpect(jsonPath("$.createdAt").exists())

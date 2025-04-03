@@ -35,6 +35,7 @@ dependencies {
     implementation("org.joda:joda-money:1.0.3")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-joda")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("commons-validator:commons-validator:1.9.0")
 }
 
 tasks.withType<Test> {

@@ -15,10 +15,10 @@ import java.util.Optional;
 @Component
 public class PaymentMapper {
 
-    public PaymentEntity toPaymentEntity(PaymentRequest paymentRequest) {
+    public PaymentEntity toPaymentEntity(PaymentRequest paymentRequest, PaymentType paymentType) {
         var now = Instant.now();
         return PaymentEntity.builder()
-                .type(PaymentType.PESA)
+                .type(paymentType)
                 .amount(paymentRequest.amount().getAmount())
                 .currency(paymentRequest.amount().getCurrencyUnit().getCode())
                 .debtorIban(paymentRequest.debtorIban())

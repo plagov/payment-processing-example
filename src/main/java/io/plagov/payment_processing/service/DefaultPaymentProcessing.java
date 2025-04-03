@@ -5,8 +5,11 @@ import io.plagov.payment_processing.entities.PaymentEntity;
 import io.plagov.payment_processing.mapper.PaymentMapper;
 import io.plagov.payment_processing.models.PaymentRequest;
 import io.plagov.payment_processing.models.PaymentResponse;
+import io.plagov.payment_processing.models.enums.PaymentType;
+import org.joda.money.CurrencyUnit;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -22,9 +25,23 @@ public class DefaultPaymentProcessing implements PaymentProcessing {
 
     @Override
     public PaymentResponse create(PaymentRequest paymentRequest) {
-        var paymentEntity = paymentMapper.toPaymentEntity(paymentRequest);
+        var paymentType = resolvePaymentType(paymentRequest);
+        var paymentEntity = paymentMapper.toPaymentEntity(paymentRequest, paymentType);
         var paymentId = paymentsDao.save(paymentEntity);
         paymentEntity.setId(paymentId);
         return paymentMapper.toPaymentResponse(paymentEntity);
+    }
+
+    private PaymentType resolvePaymentType(PaymentRequest paymentRequest) {
+        var isEurPayment = paymentRequest.amount().getCurrencyUnit().equals(CurrencyUnit.EUR);
+        var pesaCountries = List.of("EE", "LT", "LV");
+        var debtorCountry = paymentRequest.debtorIban().substring(0, 2);
+        var creditorCountry = paymentRequest.creditorIban().substring(0, 2);
+
+        if (isEurPayment && pesaCountries.containsAll(List.of(debtorCountry, creditorCountry))) {
+            return PaymentType.PESA;
+        }
+
+        return PaymentType.SWIFT;
     }
 }

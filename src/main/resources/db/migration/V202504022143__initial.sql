@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS payments
     currency            VARCHAR(3) NOT NULL,
     debtor_iban         VARCHAR(34) NOT NULL,
     creditor_iban       VARCHAR(34) NOT NULL,
-    details             TEXT NOT NULL,
+    details             VARCHAR(200) NOT NULL,
     status              VARCHAR(50) NOT NULL,
     created_at          TIMESTAMP WITH TIME ZONE NOT NULL,
     cancelled_at        TIMESTAMP WITH TIME ZONE NULL,

@@ -34,6 +34,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.34")
     implementation("org.joda:joda-money:1.0.3")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-joda")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 }
 
 tasks.withType<Test> {

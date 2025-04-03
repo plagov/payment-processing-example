@@ -11,10 +11,6 @@ public class MoneySerializer extends JsonSerializer<Money> {
 
     @Override
     public void serialize(Money value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField("currency", value.getCurrencyUnit().getCode());
-        gen.writeFieldName("amount");
-        gen.writeNumber(value.getAmount());
-        gen.writeEndObject();
+        gen.writeString(value.toString());
     }
 }

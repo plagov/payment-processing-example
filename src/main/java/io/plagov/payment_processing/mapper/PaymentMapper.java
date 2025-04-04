@@ -9,6 +9,8 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -30,7 +32,9 @@ public class PaymentMapper {
     }
 
     public PaymentResponse toPaymentResponse(PaymentEntity entity) {
-        var money = Money.of(CurrencyUnit.of(entity.getCurrency()), entity.getAmount());
+        var currency = CurrencyUnit.of(entity.getCurrency());
+        var amount = entity.getAmount().setScale(currency.getDecimalPlaces(), RoundingMode.HALF_UP);
+        var money = Money.of(currency, amount);
         return new PaymentResponse(
                 entity.getId(),
                 entity.getType(),

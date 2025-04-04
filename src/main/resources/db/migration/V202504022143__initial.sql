@@ -10,5 +10,5 @@ CREATE TABLE IF NOT EXISTS payments
     status              VARCHAR(50) NOT NULL,
     created_at          TIMESTAMP WITH TIME ZONE NOT NULL,
     cancelled_at        TIMESTAMP WITH TIME ZONE NULL,
-    cancellation_fee    DECIMAL(19, 4) NULL
+    cancellation_fee    NUMERIC(19, 4) NULL
 );

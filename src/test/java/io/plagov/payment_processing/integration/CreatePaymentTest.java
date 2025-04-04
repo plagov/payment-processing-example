@@ -2,7 +2,6 @@ package io.plagov.payment_processing.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.plagov.payment_processing.configuration.ContainersConfig;
-import io.plagov.payment_processing.models.PaymentRequest;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.junit.jupiter.api.Test;
@@ -15,9 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -38,11 +37,10 @@ class CreatePaymentTest {
 
     @Test
     void shouldCreateNewPesaPayment() throws Exception {
-        var paymentRequest = new PaymentRequest(
-                Money.parse("EUR 150.25"),
-                "EE382200221020145685",
-                "LT121000011101001000",
-                "test details");
+        var paymentRequest = Map.of("amount", Money.parse("EUR 150.25"),
+                "debtorIban", "EE382200221020145685",
+                "creditorIban", "LT121000011101001000",
+                "details", "test details");
 
         mockMvc.perform(post("/api/v1/payments")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -63,11 +61,10 @@ class CreatePaymentTest {
     @ParameterizedTest
     @MethodSource("swiftMethodSource")
     void shouldCreateNewSwiftPayment(CurrencyUnit currency, String debtorIban, String creditorIban) throws Exception {
-        var paymentRequest = new PaymentRequest(
-                Money.of(currency, 125.50),
-                debtorIban,
-                creditorIban,
-                "test details");
+        var paymentRequest = Map.of("amount", Money.of(currency, 125.50),
+                "debtorIban", debtorIban,
+                "creditorIban", creditorIban,
+                "details", "test details");
 
         mockMvc.perform(post("/api/v1/payments")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -87,17 +84,31 @@ class CreatePaymentTest {
 
     @Test
     void shouldNotCreatePaymentWithUnsupportedCurrency() throws Exception {
-        var paymentRequest = new PaymentRequest(
-                Money.parse("CHF 150.25"),
-                "EE382200221020145685",
-                "LT121000011101001000",
-                "test details");
+        var paymentRequest = Map.of("amount", Money.parse("CHF 150.25"),
+                "debtorIban", "EE382200221020145685",
+                "creditorIban", "LT121000011101001000",
+                "details", "test details");
 
         mockMvc.perform(post("/api/v1/payments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(paymentRequest)))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.fieldErrors.amount").value("The provided currency is not supported"));
+    }
+
+    @Test
+    void shouldNotCreatePaymentWithInvalidIban() throws Exception {
+        var paymentRequest = Map.of("amount", Money.parse("EUR 150.25"),
+                "debtorIban", "EE3822",
+                "creditorIban", "LT1210",
+                "details", "test details");
+
+        mockMvc.perform(post("/api/v1/payments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(paymentRequest)))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.fieldErrors.debtorIban").value("Invalid IBAN provided"))
+                .andExpect(jsonPath("$.fieldErrors.creditorIban").value("Invalid IBAN provided"));
     }
 
     private static Stream<Arguments> swiftMethodSource() {

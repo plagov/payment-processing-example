@@ -84,6 +84,20 @@ class CreatePaymentTest {
                 .andExpect(jsonPath("$.cancellationFee").isEmpty());
     }
 
+    @Test
+    void shouldNotCreatePaymentWithUnsupportedCurrency() throws Exception {
+        var paymentRequest = new PaymentRequest(
+                Money.parse("CHF 150.25"),
+                "EE382200221020145685",
+                "LT121000011101001000",
+                "test details");
+
+        mockMvc.perform(post("/api/v1/payments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(paymentRequest)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
     private static Stream<Arguments> swiftMethodSource() {
         return Stream.of(
                 Arguments.of(CurrencyUnit.USD, "EE382200221020145685", "LT121000011101001000"),

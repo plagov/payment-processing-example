@@ -10,5 +10,5 @@ public record PaymentRequest(
         @PositiveAmount @ValidCurrency Money amount,
         @ValidIban String debtorIban,
         @ValidIban String creditorIban,
-        @Size(max = 200) String details
+        @Size(min = 2, max = 20) String details
 ) { }

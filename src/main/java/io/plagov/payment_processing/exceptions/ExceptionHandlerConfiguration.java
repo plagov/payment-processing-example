@@ -33,4 +33,10 @@ public class ExceptionHandlerConfiguration {
     public ResponseEntity<ErrorResponse> handlePaymentCancellationNotAllowed(PaymentCancellationNotAllowedException ex) {
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.FORBIDDEN);
     }
+
+    @ExceptionHandler(PaymentNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ErrorResponse> handlePaymentNotFound(PaymentNotFoundException ex) {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
+    }
 }

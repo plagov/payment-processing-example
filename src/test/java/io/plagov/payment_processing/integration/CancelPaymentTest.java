@@ -82,6 +82,20 @@ class CancelPaymentTest {
                         .value("Payments older than today are not eligible for cancellation"));
     }
 
+    @Test
+    void shouldThrowExceptionWhenTryToCancelPayment_andPaymentCannotBeFound() throws Exception {
+        var createdAt = Instant.now().minus(Duration.ofDays(1));
+        addPayment("EUR", createdAt);
+
+        var uuid = UUID.randomUUID();
+        mockMvc.perform(
+                        post("/api/v1/payments/%s/cancel".formatted(uuid))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message")
+                        .value("Payment with ID %s not found".formatted(uuid)));
+    }
+
     private static Stream<Arguments> currencyWithFeeWithinOneHour() {
         return Stream.of(
                 Arguments.of("EUR", "1.0"),

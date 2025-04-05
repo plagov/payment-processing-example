@@ -3,6 +3,7 @@ package io.plagov.payment_processing.service;
 import io.plagov.payment_processing.dao.Dao;
 import io.plagov.payment_processing.entities.PaymentEntity;
 import io.plagov.payment_processing.exceptions.PaymentCancellationNotAllowedException;
+import io.plagov.payment_processing.exceptions.PaymentNotFoundException;
 import io.plagov.payment_processing.mapper.PaymentMapper;
 import io.plagov.payment_processing.models.PaymentRequest;
 import io.plagov.payment_processing.models.PaymentResponse;
@@ -16,7 +17,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Component
@@ -45,7 +45,7 @@ public class DefaultPaymentProcessing implements PaymentProcessing {
     @Override
     public PaymentResponse cancel(UUID paymentId) {
         var paymentEntity = paymentsDao.getById(paymentId)
-                .orElseThrow(() -> new NoSuchElementException("Payment not found"));
+                .orElseThrow(() -> new PaymentNotFoundException("Payment with ID %s not found".formatted(paymentId)));
         
         resolveIfEligibleForCancellation(paymentEntity);
 

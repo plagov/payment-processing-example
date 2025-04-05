@@ -54,8 +54,8 @@ class CreatePaymentTest {
                 .andExpect(jsonPath("$.details").value("test details"))
                 .andExpect(jsonPath("$.status").value("ACCEPTED"))
                 .andExpect(jsonPath("$.createdAt").exists())
-                .andExpect(jsonPath("$.cancelledAt").isEmpty())
-                .andExpect(jsonPath("$.cancellationFee").isEmpty());
+                .andExpect(jsonPath("$.cancelledAt").doesNotHaveJsonPath())
+                .andExpect(jsonPath("$.cancellationFee").doesNotHaveJsonPath());
     }
 
     @ParameterizedTest
@@ -78,8 +78,8 @@ class CreatePaymentTest {
                 .andExpect(jsonPath("$.details").value("test details"))
                 .andExpect(jsonPath("$.status").value("ACCEPTED"))
                 .andExpect(jsonPath("$.createdAt").exists())
-                .andExpect(jsonPath("$.cancelledAt").isEmpty())
-                .andExpect(jsonPath("$.cancellationFee").isEmpty());
+                .andExpect(jsonPath("$.cancelledAt").doesNotHaveJsonPath())
+                .andExpect(jsonPath("$.cancellationFee").doesNotHaveJsonPath());
     }
 
     @Test

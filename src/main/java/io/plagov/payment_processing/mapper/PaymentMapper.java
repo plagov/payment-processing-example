@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.math.RoundingMode;
 import java.time.Instant;
-import java.util.Optional;
 
 @Component
 public class PaymentMapper {
@@ -43,7 +42,7 @@ public class PaymentMapper {
                 entity.getDetails(),
                 entity.getStatus(),
                 entity.getCreatedAt(),
-                Optional.ofNullable(entity.getCancelledAt()),
-                Optional.ofNullable(entity.getCancellationFee()));
+                entity.getCancelledAt(),
+                entity.getCancellationFee());
     }
 }

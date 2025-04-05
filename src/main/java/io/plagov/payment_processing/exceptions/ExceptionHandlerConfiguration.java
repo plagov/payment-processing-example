@@ -27,4 +27,10 @@ public class ExceptionHandlerConfiguration {
         var errorResponse = new ValidationErrorResponse(exception.getStatusCode(), errors);
         return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
     }
+
+    @ExceptionHandler(PaymentCancellationNotAllowedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<ErrorResponse> handlePaymentCancellationNotAllowed(PaymentCancellationNotAllowedException ex) {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.FORBIDDEN);
+    }
 }

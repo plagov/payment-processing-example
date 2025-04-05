@@ -2,6 +2,7 @@ package io.plagov.payment_processing.service;
 
 import io.plagov.payment_processing.dao.Dao;
 import io.plagov.payment_processing.entities.PaymentEntity;
+import io.plagov.payment_processing.exceptions.PaymentCancellationNotAllowedException;
 import io.plagov.payment_processing.mapper.PaymentMapper;
 import io.plagov.payment_processing.models.PaymentRequest;
 import io.plagov.payment_processing.models.PaymentResponse;
@@ -74,7 +75,7 @@ public class DefaultPaymentProcessing implements PaymentProcessing {
     private static void resolveIfEligibleForCancellation(PaymentEntity paymentEntity) {
         var today = Instant.now().truncatedTo(ChronoUnit.DAYS);
         if (!paymentEntity.getCreatedAt().truncatedTo(ChronoUnit.DAYS).equals(today)) {
-            throw new IllegalArgumentException("Cannot cancel payment");
+            throw new PaymentCancellationNotAllowedException("Payments older than today are not eligible for cancellation");
         }
     }
 

@@ -1,6 +1,7 @@
 package io.plagov.payment_processing.mapper;
 
 import io.plagov.payment_processing.entities.PaymentEntity;
+import io.plagov.payment_processing.models.PaymentFullResponse;
 import io.plagov.payment_processing.models.PaymentRequest;
 import io.plagov.payment_processing.models.PaymentResponse;
 import io.plagov.payment_processing.models.enums.PaymentStatus;
@@ -29,11 +30,11 @@ public class PaymentMapper {
                 .build();
     }
 
-    public PaymentResponse toPaymentResponse(PaymentEntity entity) {
+    public PaymentFullResponse toPaymentFullResponse(PaymentEntity entity) {
         var currency = CurrencyUnit.of(entity.getCurrency());
         var amount = entity.getAmount().setScale(currency.getDecimalPlaces(), RoundingMode.HALF_UP);
         var money = Money.of(currency, amount);
-        return new PaymentResponse(
+        return new PaymentFullResponse(
                 entity.getId(),
                 entity.getType(),
                 money,
@@ -41,6 +42,21 @@ public class PaymentMapper {
                 entity.getCreditorIban(),
                 entity.getDetails(),
                 entity.getStatus(),
+                entity.getCreatedAt(),
+                entity.getCancelledAt(),
+                entity.getCancellationFee());
+    }
+
+    public PaymentResponse toPaymentResponse(PaymentEntity entity) {
+        var currency = CurrencyUnit.of(entity.getCurrency());
+        var amount = entity.getAmount().setScale(currency.getDecimalPlaces(), RoundingMode.HALF_UP);
+        var money = Money.of(currency, amount);
+        return new PaymentResponse(
+                entity.getId(),
+                money,
+                entity.getDebtorIban(),
+                entity.getCreditorIban(),
+                entity.getDetails(),
                 entity.getCreatedAt(),
                 entity.getCancelledAt(),
                 entity.getCancellationFee());

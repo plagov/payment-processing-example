@@ -5,6 +5,7 @@ import io.plagov.payment_processing.entities.PaymentEntity;
 import io.plagov.payment_processing.exceptions.PaymentCancellationNotAllowedException;
 import io.plagov.payment_processing.exceptions.PaymentNotFoundException;
 import io.plagov.payment_processing.mapper.PaymentMapper;
+import io.plagov.payment_processing.models.PaymentFullResponse;
 import io.plagov.payment_processing.models.PaymentRequest;
 import io.plagov.payment_processing.models.PaymentResponse;
 import io.plagov.payment_processing.models.enums.PaymentStatus;
@@ -35,16 +36,16 @@ public class DefaultPaymentProcessing implements PaymentProcessing {
     }
 
     @Override
-    public PaymentResponse create(PaymentRequest paymentRequest) {
+    public PaymentFullResponse create(PaymentRequest paymentRequest) {
         var paymentType = resolvePaymentType(paymentRequest);
         var paymentEntity = paymentMapper.toPaymentEntity(paymentRequest, paymentType);
         var paymentId = paymentsDao.save(paymentEntity);
         paymentEntity.setId(paymentId);
-        return paymentMapper.toPaymentResponse(paymentEntity);
+        return paymentMapper.toPaymentFullResponse(paymentEntity);
     }
 
     @Override
-    public PaymentResponse cancel(UUID paymentId) {
+    public PaymentFullResponse cancel(UUID paymentId) {
         var paymentEntity = paymentsDao.getById(paymentId)
                 .orElseThrow(() -> new PaymentNotFoundException("Payment with ID %s not found".formatted(paymentId)));
 
@@ -54,7 +55,7 @@ public class DefaultPaymentProcessing implements PaymentProcessing {
         var cancellationTime = Instant.now();
         var canceledPaymentEntity = paymentsDao.cancel(paymentId, cancellationTime, cancellationFee);
 
-        return paymentMapper.toPaymentResponse(canceledPaymentEntity);
+        return paymentMapper.toPaymentFullResponse(canceledPaymentEntity);
     }
 
     @Override

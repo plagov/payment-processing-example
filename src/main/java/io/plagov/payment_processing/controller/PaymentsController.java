@@ -1,5 +1,6 @@
 package io.plagov.payment_processing.controller;
 
+import io.plagov.payment_processing.models.PaymentFullResponse;
 import io.plagov.payment_processing.models.PaymentRequest;
 import io.plagov.payment_processing.models.PaymentResponse;
 import io.plagov.payment_processing.models.enums.PaymentStatus;
@@ -29,13 +30,13 @@ public class PaymentsController {
     }
 
     @PostMapping("/payments")
-    public ResponseEntity<PaymentResponse> savePayment(@Valid @RequestBody PaymentRequest request) {
+    public ResponseEntity<PaymentFullResponse> savePayment(@Valid @RequestBody PaymentRequest request) {
         var response = paymentProcessing.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/payments/{paymentId}/cancel")
-    public ResponseEntity<PaymentResponse> cancelPayment(@PathVariable UUID paymentId) {
+    public ResponseEntity<PaymentFullResponse> cancelPayment(@PathVariable UUID paymentId) {
         var response = paymentProcessing.cancel(paymentId);
         return ResponseEntity.ok(response);
     }

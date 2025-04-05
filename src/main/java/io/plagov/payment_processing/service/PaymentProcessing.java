@@ -1,5 +1,6 @@
 package io.plagov.payment_processing.service;
 
+import io.plagov.payment_processing.models.PaymentFullResponse;
 import io.plagov.payment_processing.models.PaymentRequest;
 import io.plagov.payment_processing.models.PaymentResponse;
 import io.plagov.payment_processing.models.enums.PaymentStatus;
@@ -9,9 +10,9 @@ import java.util.UUID;
 
 public interface PaymentProcessing {
 
-    PaymentResponse create(PaymentRequest paymentRequest);
+    PaymentFullResponse create(PaymentRequest paymentRequest);
 
-    PaymentResponse cancel(UUID paymentId);
+    PaymentFullResponse cancel(UUID paymentId);
 
     List<PaymentResponse> queryPayments(PaymentStatus status,
                                         Double isEqualTo,

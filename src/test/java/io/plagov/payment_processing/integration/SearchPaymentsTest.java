@@ -52,7 +52,7 @@ class SearchPaymentsTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$.[0].id").value(acceptedPaymentId.toString()))
-                .andExpect(jsonPath("$.[0].status").value("ACCEPTED"))
+                .andExpect(jsonPath("$.[0].status").doesNotHaveJsonPath())
                 .andExpect(jsonPath("$.[0].cancelledAt").doesNotHaveJsonPath())
                 .andExpect(jsonPath("$.[0].cancellationFee").doesNotHaveJsonPath());
     }
@@ -72,7 +72,7 @@ class SearchPaymentsTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$.[0].id").value(cancelledPaymentId.toString()))
-                .andExpect(jsonPath("$.[0].status").value("CANCELLED"))
+                .andExpect(jsonPath("$.[0].status").doesNotHaveJsonPath())
                 .andExpect(jsonPath("$.[0].cancelledAt").isNotEmpty())
                 .andExpect(jsonPath("$.[0].cancellationFee").isNotEmpty());
     }
@@ -95,7 +95,7 @@ class SearchPaymentsTest {
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$.[0].id").value(acceptedPaymentIdOne.toString()))
                 .andExpect(jsonPath("$.[1].id").value(acceptedPaymentIdTwo.toString()))
-                .andExpect(jsonPath("$.[0].status").value("ACCEPTED"));
+                .andExpect(jsonPath("$.[0].status").doesNotHaveJsonPath());
     }
 
     @Test
@@ -114,7 +114,7 @@ class SearchPaymentsTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$.[0].id").value(acceptedPaymentIdOne.toString()))
-                .andExpect(jsonPath("$.[0].status").value("ACCEPTED"));
+                .andExpect(jsonPath("$.[0].status").doesNotHaveJsonPath());
     }
 
     @Test
@@ -133,7 +133,7 @@ class SearchPaymentsTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$.[0].id").value(acceptedPaymentIdTwo.toString()))
-                .andExpect(jsonPath("$.[0].status").value("ACCEPTED"));
+                .andExpect(jsonPath("$.[0].status").doesNotHaveJsonPath());
     }
 
     private UUID addPayment(BigDecimal amount, String status, Timestamp cancelledAt, BigDecimal cancellationFee) {

@@ -8,8 +8,10 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.sql.JDBCType;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -75,5 +77,29 @@ public class PaymentsDao implements Dao<PaymentEntity, UUID> {
                 .param("id", uuid)
                 .query(PaymentEntity.class)
                 .single();
+    }
+
+    @Override
+    public List<PaymentEntity> queryPayments(PaymentStatus status,
+                                             Double isEqualTo,
+                                             Double isGreaterThan,
+                                             Double isLessThan) {
+        var query = """
+                SELECT
+                    id, type, amount, currency, debtor_iban, creditor_iban, details,
+                    status, created_at, cancelled_at, cancellation_fee
+                FROM payments
+                WHERE status = :status
+                    AND (:isEqualTo IS NULL OR amount = :isEqualTo)
+                    AND (:isGreaterThan IS NULL OR amount > :isGreaterThan)
+                    AND (:isLessThan IS NULL OR amount < :isLessThan)""";
+
+        return jdbcClient.sql(query)
+                .param("status", status.name())
+                .param("isEqualTo", isEqualTo, JDBCType.DOUBLE.getVendorTypeNumber())
+                .param("isGreaterThan", isGreaterThan, JDBCType.DOUBLE.getVendorTypeNumber())
+                .param("isLessThan", isLessThan, JDBCType.DOUBLE.getVendorTypeNumber())
+                .query(PaymentEntity.class)
+                .list();
     }
 }

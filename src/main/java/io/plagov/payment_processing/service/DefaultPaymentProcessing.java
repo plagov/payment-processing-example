@@ -7,6 +7,7 @@ import io.plagov.payment_processing.exceptions.PaymentNotFoundException;
 import io.plagov.payment_processing.mapper.PaymentMapper;
 import io.plagov.payment_processing.models.PaymentRequest;
 import io.plagov.payment_processing.models.PaymentResponse;
+import io.plagov.payment_processing.models.enums.PaymentStatus;
 import io.plagov.payment_processing.models.enums.PaymentType;
 import org.joda.money.CurrencyUnit;
 import org.springframework.stereotype.Component;
@@ -46,7 +47,7 @@ public class DefaultPaymentProcessing implements PaymentProcessing {
     public PaymentResponse cancel(UUID paymentId) {
         var paymentEntity = paymentsDao.getById(paymentId)
                 .orElseThrow(() -> new PaymentNotFoundException("Payment with ID %s not found".formatted(paymentId)));
-        
+
         resolveIfEligibleForCancellation(paymentEntity);
 
         var cancellationFee = calculateCancellationFee(paymentEntity);
@@ -54,6 +55,15 @@ public class DefaultPaymentProcessing implements PaymentProcessing {
         var canceledPaymentEntity = paymentsDao.cancel(paymentId, cancellationTime, cancellationFee);
 
         return paymentMapper.toPaymentResponse(canceledPaymentEntity);
+    }
+
+    @Override
+    public List<PaymentResponse> queryPayments(PaymentStatus status,
+                                               Double isEqualTo,
+                                               Double isGreaterThan,
+                                               Double isLessThan) {
+        var paymentEntities = paymentsDao.queryPayments(status, isEqualTo, isGreaterThan, isLessThan);
+        return paymentEntities.stream().map(paymentMapper::toPaymentResponse).toList();
     }
 
     private BigDecimal calculateCancellationFee(PaymentEntity paymentEntity) {

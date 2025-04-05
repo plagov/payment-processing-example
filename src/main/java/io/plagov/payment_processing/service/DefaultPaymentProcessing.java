@@ -26,13 +26,17 @@ public class DefaultPaymentProcessing implements PaymentProcessing {
 
     private final Dao<PaymentEntity, UUID> paymentsDao;
     private final PaymentMapper paymentMapper;
+    private final NotificationService notificationService;
 
     // we assume this rate was gotten from an external exchange-rate provider
     private final BigDecimal USD_TO_EUR_RATE = new BigDecimal("1.09");
 
-    public DefaultPaymentProcessing(Dao<PaymentEntity, UUID> paymentsDao, PaymentMapper paymentMapper) {
+    public DefaultPaymentProcessing(Dao<PaymentEntity, UUID> paymentsDao,
+                                    PaymentMapper paymentMapper,
+                                    NotificationService notificationService) {
         this.paymentsDao = paymentsDao;
         this.paymentMapper = paymentMapper;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -41,7 +45,9 @@ public class DefaultPaymentProcessing implements PaymentProcessing {
         var paymentEntity = paymentMapper.toPaymentEntity(paymentRequest, paymentType);
         var paymentId = paymentsDao.save(paymentEntity);
         paymentEntity.setId(paymentId);
-        return paymentMapper.toPaymentFullResponse(paymentEntity);
+        var paymentFullResponse = paymentMapper.toPaymentFullResponse(paymentEntity);
+        notificationService.notifyAboutCreatedPayment(paymentFullResponse);
+        return paymentFullResponse;
     }
 
     @Override
@@ -55,7 +61,9 @@ public class DefaultPaymentProcessing implements PaymentProcessing {
         var cancellationTime = Instant.now();
         var canceledPaymentEntity = paymentsDao.cancel(paymentId, cancellationTime, cancellationFee);
 
-        return paymentMapper.toPaymentFullResponse(canceledPaymentEntity);
+        var paymentFullResponse = paymentMapper.toPaymentFullResponse(canceledPaymentEntity);
+        notificationService.notifyAboutCancelledPayment(paymentFullResponse);
+        return paymentFullResponse;
     }
 
     @Override

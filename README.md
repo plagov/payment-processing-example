@@ -12,7 +12,7 @@ The project is build using Java 21 and Spring Boot 3 with Postgres database.
 To run the service locally, run the following docker compose command from the root of the project directory:
 
 ```shell
-docker compose --build up
+docker compose up --build
 ```
 
 The web service will be available on port `8083`. 
@@ -36,7 +36,7 @@ To create a payment, send the payload of the following format to the POST endpoi
 ```
 or using curl:
 ```shell
-curl -X POST http://localhost:8085/api/v1/payments \
+curl -X POST http://localhost:8083/api/v1/payments \
   -H "Content-Type: application/json" \
   -d '{
     "amount": "EUR 150.25",
@@ -48,7 +48,7 @@ curl -X POST http://localhost:8085/api/v1/payments \
 ### Cancel payment
 To cancel a payment, call the POST endpoint `/api/v1/payments/{paymentId}/cancel` (use an ID of the existing payment):
 ```shell
-curl -X POST http://localhost:8085/api/v1/payments/3fa85f64-5717-4562-b3fc-2c963f66afa6/cancel
+curl -X POST http://localhost:8083/api/v1/payments/3fa85f64-5717-4562-b3fc-2c963f66afa6/cancel
 ```
 
 ### Query payments
@@ -56,7 +56,7 @@ Payments can be retrieved by the mandatory `status` query parameter and the foll
 `isEqualTo`, `isGreaterThan` and `isLessThan`. Available options for the status are: `ACCEPTED` and `CANCELLED`.
 The following example will search for payments with `ACCEPTED` status and amount more than `125.00`:
 ```shell
-curl -X GET "http://localhost:8085/api/v1/payments?status=ACCEPTED&isGreaterThan=125.00"
+curl -X GET "http://localhost:8083/api/v1/payments?status=ACCEPTED&isGreaterThan=125.00"
 ```
 The endpoint will return an empty list if no payments are found.
 

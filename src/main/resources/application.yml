@@ -4,3 +4,6 @@ spring:
     username: test
     password: test
     driver-class-name: org.postgresql.Driver
+
+ip-api:
+  baseUrl: http://ip-api.com

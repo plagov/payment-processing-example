@@ -1,12 +1,13 @@
 # Payment Processing Sample Project
 
-This is a sample payment processing project. 
+This is a sample payment processing project I made as a homework assignment during the interview for 
+a backend developer role for one of the banks in Baltic states. 
 It exposes three endpoints:
 * create a payment
 * cancel a payment
 * query payments by status and amount
 
-The project is build using Java 21 and Spring Boot 3 with Postgres database.
+The project is built using Java 21 and Spring Boot 3 with a Postgres database.
 
 ## Run the service with docker compose
 To run the service locally, run the following docker compose command from the root of the project directory:
@@ -20,7 +21,7 @@ Navigate to `http://localhost:8083/swagger-ui.html` address to open the Swagger 
 
 ## Run the service within IDE (preferably IntelliJ IDEA)
 Locate the `TestPaymentProcessingApplication` class under the `src/test/java/io/plagov/payment_processing/` path 
-and run it using the IDE runner. It will start the application itself along with Postgres database inside the docker 
+and run it using the IDE runner. It will start the application itself along with a Postgres database inside the docker 
 container. The service will start on the `8080` port (NB! make sure the port is available).
 
 ## Test the application
@@ -66,5 +67,5 @@ If the country resolution failed to succeed, an error will be logged, but it won
 payment processing application.
 
 ## Notification service
-The payment processing application sends an event notification to a dummy notification service when a payment is created
-or when a payment is cancelled.
+The payment processing application sends an event notification to a fake notification service when a payment is created
+or when a payment is canceled.
